@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doxmagens IA - Oficial @DoxOficial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --verde-neon: #00ff41;
+            --verde-suave: rgba(0, 255, 65, 0.2);
+            --azul-neon: #00d4ff;
+            --naranja-hacking: #ff8800;
+            --fondo-negro: #050505;
+        }
+
+        body {
+            background-color: var(--fondo-negro);
+            color: var(--verde-neon);
+            font-family: 'Share Tech Mono', monospace;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .fondo-rejilla {
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(var(--verde-suave) 1px, transparent 1px),
+                linear-gradient(90deg, var(--verde-suave) 1px, transparent 1px);
+            background-size: 50px 50px;
+            perspective: 1000px;
+            transform: perspective(500px) rotateX(60deg);
+            transform-origin: top;
+            z-index: -1;
+            animation: desplazamiento 15s linear infinite;
+        }
+
+        @keyframes desplazamiento {
+            from { background-position: 0 0; }
+            to { background-position: 0 1000px; }
+        }
+
+        .linea-escaneo {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .marco-terminal {
+            background: rgba(0, 15, 0, 0.95);
+            border: 2px solid var(--verde-neon);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
+        }
+
+        .boton-seguro {
+            border: 2px solid var(--azul-neon);
+            color: var(--azul-neon);
+            background: rgba(0, 212, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .seccion-android {
+            border: 2px solid var(--naranja-hacking);
+            background: rgba(255, 136, 0, 0.05);
+        }
+
+        .brillo-terminal {
+            text-shadow: 0 0 10px var(--verde-neon), 0 0 20px var(--verde-neon);
+        }
+
+        .barra-progreso {
+            height: 4px;
+            background: var(--verde-neon);
+            box-shadow: 0 0 15px var(--verde-neon);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Modal para la Clave */
+        #modal-key {
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-12">
+    <div class="fondo-rejilla"></div>
+    <div class="linea-escaneo"></div>
+
+    <!-- MODAL DE CONFIGURACIÓN DE CLAVE -->
+    <div id="modal-key" class="fixed inset-0 z-[200] flex items-center justify-center p-4 hidden">
+        <div class="marco-terminal p-8 max-w-md w-full">
+            <h2 class="text-xl font-bold mb-4 text-white uppercase tracking-tighter">Configuración de Núcleo</h2>
+            <p class="text-[10px] mb-6 opacity-70">Detectada ausencia de API KEY. Pégala aquí para activar la IA. No se guardará en el servidor, solo en tu sesión actual.</p>
+            <input type="text" id="input-api-key" placeholder="AIzaSy..." class="w-full bg-black border border-green-500 p-3 text-sm text-green-400 mb-6 outline-none">
+            <button onclick="guardarKeyLocal()" class="w-full bg-green-500 text-black py-3 font-bold text-xs uppercase">Activar Sistema</button>
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto">
+        <header class="text-center mb-16">
+            <h1 class="text-6xl md:text-8xl font-black italic tracking-tighter brillo-terminal uppercase">
+                DOXMAGENS<span class="text-white">IA</span>
+            </h1>
+            <div class="mt-4 flex justify-center items-center gap-4 text-[10px] font-bold tracking-[0.4em] opacity-60">
+                <span>ESTADO: PROTEGIDO</span>
+                <span>/</span>
+                <span>AUTOR: @DoxOficial</span>
+            </div>
+
+            <div class="mt-12 flex justify-center">
+                <div class="w-full max-w-md">
+                    <button onclick="abrirPrivado()" class="boton-seguro w-full py-5 font-black text-sm tracking-[0.3em] flex items-center justify-center gap-4">
+                        ACCESO AL GRUPO PRIVADO
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <!-- PANEL IZQUIERDO -->
+            <div class="lg:col-span-4 space-y-8">
+                <div class="marco-terminal p-8">
+                    <h2 class="text-xs font-bold uppercase mb-8 border-l-4 border-green-500 pl-3">Sintetizador IA</h2>
+                    
+                    <div class="grid grid-cols-2 gap-2 mb-8">
+                        <button onclick="cambiarModo('crear')" id="btn-crear" class="py-3 text-[10px] font-bold border-2 border-green-500 bg-green-500 text-black">CREAR</button>
+                        <button onclick="cambiarModo('editar')" id="btn-editar" class="py-3 text-[10px] font-bold border-2 border-green-500 text-green-500">EDITAR</button>
+                    </div>
+
+                    <div id="zona-archivo" class="hidden mb-8">
+                        <div onclick="document.getElementById('input-f').click()" class="border-2 border-dashed border-green-500/30 h-32 flex items-center justify-center cursor-pointer hover:bg-green-500/10">
+                            <span class="text-[10px] font-bold">CARGAR IMAGEN</span>
+                            <input type="file" id="input-f" class="hidden" accept="image/*">
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <textarea id="texto-entrada" placeholder="Describe tu creación..." class="w-full h-40 bg-black border-2 border-green-900/50 p-4 text-sm focus:border-green-400 outline-none resize-none text-green-300"></textarea>
+                    </div>
+
+                    <button id="btn-ejecutar" onclick="ejecutarIA()" class="w-full bg-green-500 text-black py-5 font-black text-xs tracking-widest hover:shadow-[0_0_20px_#00ff41] transition-all">
+                        INICIAR SECUENCIA
+                    </button>
+                    
+                    <button onclick="configurarKey()" class="w-full mt-4 text-[9px] opacity-40 hover:opacity-100 uppercase tracking-widest text-white">Editar API Key</button>
+                </div>
+
+                <!-- SECCION HACKING ANDROID -->
+                <div class="marco-terminal p-8 seccion-android">
+                    <h3 class="text-orange-500 font-bold text-sm mb-4 italic uppercase">UPLINK: @DodoxOficial</h3>
+                    <p class="text-[12px] text-white font-bold mb-6">Aprende Hacking desde Android con el método exclusivo de Dodox.</p>
+                    <a href="https://t.me/DodoxOficial" target="_blank" class="block text-center py-4 border-2 border-orange-500 text-orange-500 text-[10px] font-black hover:bg-orange-500 hover:text-black transition-all">UNIRSE AL CANAL</a>
+                </div>
+            </div>
+
+            <!-- MONITOR DERECHO -->
+            <div class="lg:col-span-8">
+                <div class="marco-terminal min-h-[600px] flex flex-col overflow-hidden">
+                    <div class="bg-black/80 p-4 border-b-2 border-green-900/30 flex justify-between items-center">
+                        <div id="estado-consola" class="text-[9px] font-bold text-green-500/40 uppercase tracking-[0.4em]">SISTEMA LISTO</div>
+                        <button id="descarga" class="hidden text-[10px] text-cyan-400 font-bold uppercase underline">Descargar Imagen</button>
+                    </div>
+
+                    <div class="flex-1 relative flex items-center justify-center p-8 bg-[#020202]">
+                        <div id="pantalla-vacia" class="text-center opacity-10">
+                            <p class="text-xs tracking-[1em] font-black">NÚCLEO_EN_ESPERA</p>
+                        </div>
+                        <div id="procesando" class="hidden w-full max-w-sm text-center">
+                            <p class="text-[10px] font-bold mb-4 tracking-[0.5em]">DECODIFICANDO MATRIZ...</p>
+                            <div class="w-full bg-white/5 h-1"><div id="barra-ia" class="barra-progreso"></div></div>
+                        </div>
+                        <img id="resultado-ia" class="hidden max-h-[500px] shadow-2xl">
+                    </div>
+
+                    <div class="bg-black p-4 text-[10px] text-green-500/30 border-t border-green-900/20 italic">
+                        <div id="logs-consola">>> INICIALIZANDO INTERFAZ...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sistema dinámico de Key
+        let API_KEY = "";
+        let modoActual = 'crear';
+        let imgBase64 = null;
+
+        window.onload = () => {
+            const savedKey = localStorage.getItem('dox_ia_key');
+            if (savedKey) {
+                API_KEY = savedKey;
+            } else {
+                configurarKey();
+            }
+        };
+
+        function configurarKey() {
+            document.getElementById('modal-key').classList.remove('hidden');
+        }
+
+        function guardarKeyLocal() {
+            const val = document.getElementById('input-api-key').value.trim();
+            if (val.startsWith("AIza")) {
+                API_KEY = val;
+                localStorage.setItem('dox_ia_key', val);
+                document.getElementById('modal-key').classList.add('hidden');
+                logConsola("SISTEMA AUTORIZADO CON ÉXITO");
+            } else {
+                alert("CLAVE INVÁLIDA. Debe empezar por AIza...");
+            }
+        }
+
+        function cambiarModo(m) {
+            modoActual = m;
+            document.getElementById('zona-archivo').classList.toggle('hidden', modoActual !== 'editar');
+            document.getElementById('btn-crear').style.background = modoActual === 'crear' ? 'var(--verde-neon)' : 'transparent';
+            document.getElementById('btn-crear').style.color = modoActual === 'crear' ? 'black' : 'var(--verde-neon)';
+            document.getElementById('btn-editar').style.background = modoActual === 'editar' ? 'var(--verde-neon)' : 'transparent';
+            document.getElementById('btn-editar').style.color = modoActual === 'editar' ? 'black' : 'var(--verde-neon)';
+        }
+
+        document.getElementById('input-f').onchange = (e) => {
+            const f = e.target.files[0];
+            if(f) {
+                const r = new FileReader();
+                r.onload = (ev) => {
+                    imgBase64 = ev.target.result;
+                    logConsola("IMAGEN CARGADA EN BÚFER");
+                };
+                r.readAsDataURL(f);
+            }
+        };
+
+        function abrirPrivado() {
+            window.open('https://t.me/+qhI-LthptyYxOWFh', '_blank');
+        }
+
+        async function ejecutarIA() {
+            if (!API_KEY) return configurarKey();
+            
+            const prompt = document.getElementById('texto-entrada').value.trim();
+            if(!prompt) return;
+            
+            document.getElementById('btn-ejecutar').disabled = true;
+            document.getElementById('pantalla-vacia').classList.add('hidden');
+            document.getElementById('resultado-ia').classList.add('hidden');
+            document.getElementById('procesando').classList.remove('hidden');
+            document.getElementById('estado-consola').innerText = "PROCESANDO PETICIÓN...";
+            
+            let p = 0;
+            const bucle = setInterval(() => {
+                p = (p + 5) % 100;
+                document.getElementById('barra-ia').style.width = p + '%';
+            }, 200);
+
+            try {
+                let url;
+                if(modoActual === 'crear') {
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${API_KEY}`, {
+                        method: 'POST',
+                        body: JSON.stringify({ instances: [{ prompt: prompt }], parameters: { sampleCount: 1 } })
+                    });
+                    const json = await res.json();
+                    url = `data:image/png;base64,${json.predictions[0].bytesBase64Encoded}`;
+                } else {
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${API_KEY}`, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: "image/png", data: imgBase64.split(',')[1] } }] }],
+                            generationConfig: { responseModalities: ['IMAGE'] }
+                        })
+                    });
+                    const json = await res.json();
+                    const b64 = json.candidates[0].content.parts.find(p => p.inlineData).inlineData.data;
+                    url = `data:image/png;base64,${b64}`;
+                }
+
+                document.getElementById('resultado-ia').src = url;
+                document.getElementById('resultado-ia').classList.remove('hidden');
+                document.getElementById('descarga').classList.remove('hidden');
+                document.getElementById('descarga').onclick = () => {
+                    const a = document.createElement('a'); a.href = url; a.download = 'Dox_IA.png'; a.click();
+                };
+                document.getElementById('estado-consola').innerText = "GENERACIÓN EXITOSA";
+                logConsola("MATRIZ DE IMAGEN SINTETIZADA");
+            } catch (e) {
+                document.getElementById('estado-consola').innerText = "ERROR EN EL NÚCLEO";
+                logConsola("FALLO CRÍTICO: REVISA TU CLAVE O CUOTA");
+            } finally {
+                clearInterval(bucle);
+                document.getElementById('procesando').classList.add('hidden');
+                document.getElementById('btn-ejecutar').disabled = false;
+            }
+        }
+
+        function logConsola(msg) {
+            const c = document.getElementById('logs-consola');
+            c.innerText = `>> ${msg} >> ` + c.innerText.substring(0, 80);
+        }
+
+        setInterval(() => {
+            const textos = ["CANAL SEGURO", "UPLINK_ACTIVO", "AUTOR: @DoxOficial", "DATOS ENCRIPTADOS"];
+            logConsola(textos[Math.floor(Math.random()*textos.length)]);
+        }, 5000);
+    </script>
+</body>
+</html>
+
+
